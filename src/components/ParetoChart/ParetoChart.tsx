@@ -33,6 +33,7 @@ const prepConfig = (data: ParetoData, theme: GrafanaTheme2, options: Options) =>
     distribution: ScaleDistribution.Ordinal,
     orientation: ScaleOrientation.Horizontal,
     direction: ScaleDirection.Right,
+    range: [-0.5, data.categories.length - 0.5],
   });
 
   // Y scale — frequency (left axis)
@@ -60,6 +61,7 @@ const prepConfig = (data: ParetoData, theme: GrafanaTheme2, options: Options) =>
     scaleKey: 'x',
     isTime: false,
     placement: AxisPlacement.Bottom,
+    splits: () => data.categories.map((_, i) => i),
     values: (u: uPlot, splits: number[]) => {
       const maxWidth = data.categories.reduce(
         (max, label) => Math.max(measureText(label, UPLOT_AXIS_FONT_SIZE).width, max),
@@ -107,7 +109,7 @@ const prepConfig = (data: ParetoData, theme: GrafanaTheme2, options: Options) =>
   });
 
   // Bar series — frequency values
-  const barPathBuilder = uPlot.paths.bars!({ align: 1, size: [1, Infinity] });
+  const barPathBuilder = uPlot.paths.bars!({ align: 0, size: [1, Infinity] });
   const barColor = theme.visualization.getColorByName('blue');
 
   builder.addSeries({
