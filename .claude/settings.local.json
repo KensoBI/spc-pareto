@@ -6,7 +6,9 @@
       "WebFetch(domain:community.grafana.com)",
       "WebFetch(domain:github.com)",
       "Bash(npm install:*)",
-      "Bash(npm run dev:*)"
+      "Bash(npm run dev:*)",
+      "Bash(npx webpack:*)",
+      "Bash(npx tsc:*)"
     ]
   }
 }

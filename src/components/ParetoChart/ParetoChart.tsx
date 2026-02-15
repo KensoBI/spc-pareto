@@ -1,6 +1,6 @@
 import React from 'react';
 import uPlot, { AlignedData } from 'uplot';
-import { GrafanaTheme2 } from '@grafana/data';
+import { DataFrame, FieldType, GrafanaTheme2 } from '@grafana/data';
 import { ScaleDistribution, AxisPlacement, ScaleDirection, ScaleOrientation } from '@grafana/schema';
 import {
   UPlotConfigBuilder,
@@ -11,7 +11,7 @@ import {
   UPLOT_AXIS_FONT_SIZE,
 } from '@grafana/ui';
 import { ParetoData, toAlignedData } from '../../data/transform';
-import { Options, FieldConfig, defaultFieldConfig } from '../../types';
+import { Options } from '../../types';
 
 export interface ParetoChartProps {
   data: ParetoData;
@@ -24,7 +24,6 @@ export interface ParetoChartProps {
 
 const prepConfig = (data: ParetoData, theme: GrafanaTheme2, options: Options) => {
   const builder = new UPlotConfigBuilder();
-  const customConfig: FieldConfig = { ...defaultFieldConfig };
 
   // X scale — ordinal categories
   builder.addScale({
@@ -110,17 +109,20 @@ const prepConfig = (data: ParetoData, theme: GrafanaTheme2, options: Options) =>
 
   // Bar series — frequency values
   const barPathBuilder = uPlot.paths.bars!({ align: 0, size: [1, Infinity] });
-  const barColor = theme.visualization.getColorByName('blue');
+  const barColor = options.barColor
+    ? theme.visualization.getColorByName(options.barColor)
+    : theme.visualization.getColorByName('blue');
 
   builder.addSeries({
     scaleKey: 'y-freq',
-    lineWidth: customConfig.lineWidth,
+    lineWidth: options.barLineWidth ?? 1,
     lineColor: barColor,
-    fillOpacity: customConfig.fillOpacity,
+    fillOpacity: options.barFillOpacity ?? 80,
     theme,
     pathBuilder: barPathBuilder,
     show: true,
-    gradientMode: customConfig.gradientMode,
+    gradientMode: options.barGradientMode,
+    dataFrameFieldIndex: { frameIndex: 0, fieldIndex: 1 },
   });
 
   // Line series — cumulative percentage
@@ -137,8 +139,9 @@ const prepConfig = (data: ParetoData, theme: GrafanaTheme2, options: Options) =>
     show: true,
     drawStyle: 'line' as any,
     showPoints: options.showCumulativePoints ? 'always' as any : 'never' as any,
-    pointSize: 5,
+    pointSize: options.cumulativePointSize ?? 5,
     pointColor: lineColor,
+    dataFrameFieldIndex: { frameIndex: 0, fieldIndex: 2 },
   });
 
   return builder;
@@ -172,11 +175,48 @@ export class ParetoChart extends React.Component<ParetoChartProps, State> {
   }
 
   renderLegend(config: UPlotConfigBuilder) {
-    const { options } = this.props;
+    const { options, data, theme } = this.props;
     if (!options.legend || options.legend.showLegend === false) {
       return null;
     }
-    return <PlotLegend data={[]} config={config} maxHeight="35%" maxWidth="60%" {...options.legend} />;
+
+    const barColor = options.barColor
+      ? theme.visualization.getColorByName(options.barColor)
+      : theme.visualization.getColorByName('blue');
+    const lineColor = options.cumulativeLineColor
+      ? theme.visualization.getColorByName(options.cumulativeLineColor)
+      : theme.colors.warning.main;
+
+    const legendFrames: DataFrame[] = [
+      {
+        fields: [
+          { name: 'x', type: FieldType.number, values: [], config: {}, state: undefined },
+          {
+            name: 'Frequency',
+            type: FieldType.number,
+            values: data.values,
+            config: {
+              color: { mode: 'fixed', fixedColor: barColor },
+            },
+            state: undefined,
+          },
+          {
+            name: 'Cumulative %',
+            type: FieldType.number,
+            values: data.cumulativePercent,
+            config: {
+              color: { mode: 'fixed', fixedColor: lineColor },
+            },
+            state: undefined,
+          },
+        ],
+        length: data.values.length,
+      },
+    ];
+
+    return (
+      <PlotLegend data={legendFrames} config={config} {...options.legend} />
+    );
   }
 
   render() {

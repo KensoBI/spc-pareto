@@ -1,9 +1,7 @@
 import { PanelProps } from '@grafana/data';
 import {
-  AxisConfig,
   OptionsWithLegend,
   OptionsWithTooltip,
-  HideableFieldConfig,
   GraphGradientMode,
 } from '@grafana/schema';
 
@@ -13,10 +11,15 @@ export interface Options extends OptionsWithLegend, OptionsWithTooltip {
   cumulativeLineColor: string;
   cumulativeLineWidth: number;
   showCumulativePoints: boolean;
+  cumulativePointSize: number;
   showStatisticsTable: boolean;
+  barColor: string;
+  barFillOpacity: number;
+  barLineWidth: number;
+  barGradientMode: GraphGradientMode;
 }
 
-export interface FieldConfig extends AxisConfig, HideableFieldConfig {
+export interface FieldConfig {
   fillOpacity?: number;
   gradientMode?: GraphGradientMode;
   lineWidth?: number;
@@ -31,10 +34,15 @@ export const defaultFieldConfig: Partial<FieldConfig> = {
 export const defaultOptions: Partial<Options> = {
   showThresholdLine: true,
   thresholdValue: 80,
-  cumulativeLineColor: '',
+  cumulativeLineColor: 'orange',
   cumulativeLineWidth: 2,
   showCumulativePoints: true,
+  cumulativePointSize: 5,
   showStatisticsTable: true,
+  barColor: 'blue',
+  barFillOpacity: 80,
+  barLineWidth: 1,
+  barGradientMode: GraphGradientMode.None,
 };
 
 export interface PanelPropsDef extends PanelProps<Options> {}

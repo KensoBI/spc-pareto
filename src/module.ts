@@ -1,55 +1,10 @@
-import { FieldConfigProperty, PanelPlugin } from '@grafana/data';
+import { PanelPlugin } from '@grafana/data';
 import { GraphGradientMode } from '@grafana/schema';
 import { commonOptionsBuilder } from '@grafana/ui';
-import { Options, FieldConfig, defaultFieldConfig, defaultOptions } from './types';
+import { Options, defaultFieldConfig, defaultOptions } from './types';
 import { ParetoPanel } from './components/ParetoPanel';
 
-export const plugin = new PanelPlugin<Options, FieldConfig>(ParetoPanel)
-  .useFieldConfig({
-    standardOptions: {
-      [FieldConfigProperty.Color]: {
-        settings: {
-          byValueSupport: false,
-        },
-      },
-    },
-    useCustomConfig: (builder) => {
-      builder
-        .addSliderInput({
-          path: 'fillOpacity',
-          name: 'Fill opacity',
-          defaultValue: defaultFieldConfig.fillOpacity,
-          settings: {
-            min: 0,
-            max: 100,
-            step: 1,
-          },
-        })
-        .addSliderInput({
-          path: 'lineWidth',
-          name: 'Line width',
-          defaultValue: defaultFieldConfig.lineWidth,
-          settings: {
-            min: 0,
-            max: 10,
-            step: 1,
-          },
-        })
-        .addRadio({
-          path: 'gradientMode',
-          name: 'Gradient mode',
-          defaultValue: defaultFieldConfig.gradientMode,
-          settings: {
-            options: [
-              { value: GraphGradientMode.None, label: 'None' },
-              { value: GraphGradientMode.Opacity, label: 'Opacity' },
-              { value: GraphGradientMode.Hue, label: 'Hue' },
-              { value: GraphGradientMode.Scheme, label: 'Scheme' },
-            ],
-          },
-        });
-    },
-  })
+export const plugin = new PanelPlugin<Options>(ParetoPanel)
   .setPanelOptions((builder) => {
     builder
       .addBooleanSwitch({
@@ -97,12 +52,66 @@ export const plugin = new PanelPlugin<Options, FieldConfig>(ParetoPanel)
         defaultValue: defaultOptions.showCumulativePoints,
         category: ['Cumulative line'],
       })
+      .addSliderInput({
+        path: 'cumulativePointSize',
+        name: 'Point size',
+        defaultValue: defaultOptions.cumulativePointSize,
+        settings: {
+          min: 1,
+          max: 20,
+          step: 1,
+        },
+        category: ['Cumulative line'],
+        showIf: (opts) => opts.showCumulativePoints,
+      })
+      .addColorPicker({
+        path: 'barColor',
+        name: 'Bar color',
+        description: 'Color of the frequency bars',
+        defaultValue: defaultOptions.barColor,
+        category: ['Bar'],
+      })
+      .addSliderInput({
+        path: 'barFillOpacity',
+        name: 'Fill opacity',
+        defaultValue: defaultFieldConfig.fillOpacity,
+        settings: {
+          min: 0,
+          max: 100,
+          step: 1,
+        },
+        category: ['Bar'],
+      })
+      .addSliderInput({
+        path: 'barLineWidth',
+        name: 'Line width',
+        defaultValue: defaultFieldConfig.lineWidth,
+        settings: {
+          min: 0,
+          max: 10,
+          step: 1,
+        },
+        category: ['Bar'],
+      })
       .addBooleanSwitch({
         path: 'showStatisticsTable',
         name: 'Show statistics table',
         description: 'Show a table with Pareto statistics below the chart',
         defaultValue: defaultOptions.showStatisticsTable,
         category: ['Statistics table'],
+      })
+      .addRadio({
+        path: 'barGradientMode',
+        name: 'Gradient mode',
+        defaultValue: defaultFieldConfig.gradientMode,
+        settings: {
+          options: [
+            { value: GraphGradientMode.None, label: 'None' },
+            { value: GraphGradientMode.Opacity, label: 'Opacity' },
+            { value: GraphGradientMode.Hue, label: 'Hue' },
+          ],
+        },
+        category: ['Bar'],
       });
 
     commonOptionsBuilder.addLegendOptions(builder);
