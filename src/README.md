@@ -38,7 +38,10 @@ SPC Pareto is built using Grafana's native visualization components. This means 
 | Automatic sorting | Categories are ranked by frequency — no manual ordering needed |
 | Dual y-axes | Left axis shows frequency counts, right axis shows cumulative percentage (0–100%) |
 | Threshold line | Configurable threshold (default 80%) with horizontal and vertical reference lines |
+| Vital few highlight | Bars beyond the threshold crossing point are visually muted, making the vital few stand out |
 | Cumulative line | Customizable color, width, and point markers |
+| Top N / Other grouping | Collapse low-frequency categories into an "Other" bucket to reduce noise |
+| Value labels | Optional count, percentage, or both displayed above each bar |
 | Statistics table | Interactive table with category, frequency, % of total, cumulative count, and cumulative % |
 | Resizable layout | Drag the splitter between chart and table to adjust the view |
 
@@ -99,13 +102,46 @@ Porosity,4
 
 ## Panel Options
 
+### Threshold
+
 | Option | Description | Default |
 |--------|-------------|---------|
 | Show threshold line | Display the 80/20 reference lines | On |
 | Threshold value | Cumulative percentage threshold | 80% |
-| Cumulative line color | Color of the cumulative percentage line | Theme warning color |
-| Cumulative line width | Stroke width of the cumulative line | 2 |
+| Highlight vital few | Visually mute bars beyond the threshold crossing point | Off |
+| Trivial bar opacity | Opacity for the muted "trivial many" bars (10–100%) | 40% |
+
+### Cumulative line
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| Line color | Color of the cumulative percentage line | Orange |
+| Line width | Stroke width of the cumulative line | 2 |
 | Show points | Show point markers on the cumulative line | On |
+| Point size | Size of point markers | 5 |
+
+### Top N / Other
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| Limit categories | Group low-frequency categories into an "Other" bucket | Off |
+| Show top N categories | Number of categories to show before grouping the rest | 10 |
+
+### Bar
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| Bar color | Color of the frequency bars | Blue |
+| Fill opacity | Bar fill opacity (0–100%) | 80% |
+| Line width | Bar border width | 1 |
+| Gradient mode | None, Opacity, or Hue | None |
+| Show value labels | Display labels above each bar | Off |
+| Label content | Count, % of Total, or Both | Count |
+
+### Statistics table
+
+| Option | Description | Default |
+|--------|-------------|---------|
 | Show statistics table | Display the interactive statistics table | On |
 
 ## Documentation

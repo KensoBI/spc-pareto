@@ -10,7 +10,7 @@ import {
   measureText,
   UPLOT_AXIS_FONT_SIZE,
 } from '@grafana/ui';
-import { ParetoData, toAlignedData } from '../../data/transform';
+import { ParetoData, toAlignedData, splitVitalTrivial } from '../../data/transform';
 import { Options } from '../../types';
 
 export interface ParetoChartProps {
@@ -113,17 +113,47 @@ const prepConfig = (data: ParetoData, theme: GrafanaTheme2, options: Options) =>
     ? theme.visualization.getColorByName(options.barColor)
     : theme.visualization.getColorByName('blue');
 
-  builder.addSeries({
-    scaleKey: 'y-freq',
-    lineWidth: options.barLineWidth ?? 1,
-    lineColor: barColor,
-    fillOpacity: options.barFillOpacity ?? 80,
-    theme,
-    pathBuilder: barPathBuilder,
-    show: true,
-    gradientMode: options.barGradientMode,
-    dataFrameFieldIndex: { frameIndex: 0, fieldIndex: 1 },
-  });
+  const useVitalSplit = options.showThresholdLine && options.enableVitalHighlight;
+
+  if (useVitalSplit) {
+    // Two bar series: vital (full opacity) and trivial (reduced opacity)
+    builder.addSeries({
+      scaleKey: 'y-freq',
+      lineWidth: options.barLineWidth ?? 1,
+      lineColor: barColor,
+      fillOpacity: options.barFillOpacity ?? 80,
+      theme,
+      pathBuilder: barPathBuilder,
+      show: true,
+      gradientMode: options.barGradientMode,
+      dataFrameFieldIndex: { frameIndex: 0, fieldIndex: 1 },
+    });
+
+    builder.addSeries({
+      scaleKey: 'y-freq',
+      lineWidth: options.barLineWidth ?? 1,
+      lineColor: barColor,
+      fillOpacity: options.trivialBarOpacity ?? 40,
+      theme,
+      pathBuilder: barPathBuilder,
+      show: true,
+      gradientMode: options.barGradientMode,
+      dataFrameFieldIndex: { frameIndex: 0, fieldIndex: 2 },
+    });
+  } else {
+    // Single bar series
+    builder.addSeries({
+      scaleKey: 'y-freq',
+      lineWidth: options.barLineWidth ?? 1,
+      lineColor: barColor,
+      fillOpacity: options.barFillOpacity ?? 80,
+      theme,
+      pathBuilder: barPathBuilder,
+      show: true,
+      gradientMode: options.barGradientMode,
+      dataFrameFieldIndex: { frameIndex: 0, fieldIndex: 1 },
+    });
+  }
 
   // Line series — cumulative percentage
   const lineColor = options.cumulativeLineColor
@@ -141,7 +171,7 @@ const prepConfig = (data: ParetoData, theme: GrafanaTheme2, options: Options) =>
     showPoints: options.showCumulativePoints ? 'always' as any : 'never' as any,
     pointSize: options.cumulativePointSize ?? 5,
     pointColor: lineColor,
-    dataFrameFieldIndex: { frameIndex: 0, fieldIndex: 2 },
+    dataFrameFieldIndex: { frameIndex: 0, fieldIndex: useVitalSplit ? 3 : 2 },
   });
 
   return builder;
@@ -160,7 +190,11 @@ export class ParetoChart extends React.Component<ParetoChartProps, State> {
 
   prepState(props: ParetoChartProps): State {
     const config = prepConfig(props.data, props.theme, props.options);
-    const alignedData = toAlignedData(props.data);
+    const useVitalSplit = props.options.showThresholdLine && props.options.enableVitalHighlight;
+    const vitalSplit = useVitalSplit
+      ? splitVitalTrivial(props.data, props.options.thresholdValue ?? 80)
+      : undefined;
+    const alignedData = toAlignedData(props.data, vitalSplit);
     return { config, alignedData };
   }
 
@@ -187,29 +221,47 @@ export class ParetoChart extends React.Component<ParetoChartProps, State> {
       ? theme.visualization.getColorByName(options.cumulativeLineColor)
       : theme.colors.warning.main;
 
+    const useVitalSplit = options.showThresholdLine && options.enableVitalHighlight;
+    const fields: DataFrame['fields'] = [
+      { name: 'x', type: FieldType.number, values: [], config: {}, state: undefined },
+      {
+        name: 'Frequency',
+        type: FieldType.number,
+        values: data.values,
+        config: {
+          color: { mode: 'fixed', fixedColor: barColor },
+        },
+        state: undefined,
+      },
+    ];
+
+    if (useVitalSplit) {
+      // Add a hidden placeholder for the trivial series so legend indices stay aligned
+      fields.push({
+        name: 'Frequency (trivial)',
+        type: FieldType.number,
+        values: data.values,
+        config: {
+          color: { mode: 'fixed', fixedColor: barColor },
+          custom: { hideFrom: { legend: true, tooltip: true, viz: false } },
+        },
+        state: undefined,
+      });
+    }
+
+    fields.push({
+      name: 'Cumulative %',
+      type: FieldType.number,
+      values: data.cumulativePercent,
+      config: {
+        color: { mode: 'fixed', fixedColor: lineColor },
+      },
+      state: undefined,
+    });
+
     const legendFrames: DataFrame[] = [
       {
-        fields: [
-          { name: 'x', type: FieldType.number, values: [], config: {}, state: undefined },
-          {
-            name: 'Frequency',
-            type: FieldType.number,
-            values: data.values,
-            config: {
-              color: { mode: 'fixed', fixedColor: barColor },
-            },
-            state: undefined,
-          },
-          {
-            name: 'Cumulative %',
-            type: FieldType.number,
-            values: data.cumulativePercent,
-            config: {
-              color: { mode: 'fixed', fixedColor: lineColor },
-            },
-            state: undefined,
-          },
-        ],
+        fields,
         length: data.values.length,
       },
     ];

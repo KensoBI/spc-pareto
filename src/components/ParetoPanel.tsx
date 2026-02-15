@@ -3,9 +3,10 @@ import { UPlotConfigBuilder, useSplitter, useTheme2 } from '@grafana/ui';
 import { PanelDataErrorView } from '@grafana/runtime';
 import { ParetoChart } from './ParetoChart/ParetoChart';
 import { ThresholdLine } from './ThresholdLine/ThresholdLine';
+import { BarLabels } from './BarLabels/BarLabels';
 import { ParetoTooltip } from './ParetoChart/ParetoTooltip';
 import { StatisticsTable } from './StatisticsTable/StatisticsTable';
-import { transformToParetoData, ParetoData } from '../data/transform';
+import { transformToParetoData, applyTopNGrouping, ParetoData } from '../data/transform';
 import { PanelPropsDef } from '../types';
 
 export const ParetoPanel: React.FC<PanelPropsDef> = ({ data, options, width, height, fieldConfig, id }) => {
@@ -15,8 +16,12 @@ export const ParetoPanel: React.FC<PanelPropsDef> = ({ data, options, width, hei
     if (!data.series.length) {
       return null;
     }
-    return transformToParetoData(data.series);
-  }, [data.series]);
+    let result = transformToParetoData(data.series);
+    if (result && options.enableTopN) {
+      result = applyTopNGrouping(result, options.topNCount ?? 10);
+    }
+    return result;
+  }, [data.series, options.enableTopN, options.topNCount]);
 
   const showTable = options.showStatisticsTable !== false;
 
@@ -54,11 +59,24 @@ export const ParetoPanel: React.FC<PanelPropsDef> = ({ data, options, width, hei
           {options.showThresholdLine && (
             <ThresholdLine config={config} data={paretoData} thresholdValue={options.thresholdValue ?? 80} />
           )}
+          {options.showBarLabels && (
+            <BarLabels
+              config={config}
+              data={paretoData}
+              labelContent={options.barLabelContent ?? 'value'}
+            />
+          )}
           <ParetoTooltip config={config} data={paretoData} />
         </>
       );
     },
-    [paretoData, options.showThresholdLine, options.thresholdValue]
+    [
+      paretoData,
+      options.showThresholdLine,
+      options.thresholdValue,
+      options.showBarLabels,
+      options.barLabelContent,
+    ]
   );
 
   if (!paretoData) {

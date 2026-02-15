@@ -17,10 +17,13 @@ By reading the chart left to right, you can quickly identify which categories co
 The plugin takes query results containing **categories** (string values) and **counts** (numeric values), then automatically:
 
 1. Sorts categories from highest to lowest count
-2. Calculates each category's percentage of the total
-3. Computes the running cumulative percentage
-4. Renders bars on the left y-axis (frequency) and the cumulative line on the right y-axis (0–100%)
-5. Draws a configurable threshold line (default 80%) across both axes
+2. Optionally groups low-frequency categories into an "Other" bucket (Top N grouping)
+3. Calculates each category's percentage of the total
+4. Computes the running cumulative percentage
+5. Renders bars on the left y-axis (frequency) and the cumulative line on the right y-axis (0–100%)
+6. Draws a configurable threshold line (default 80%) across both axes
+7. Optionally highlights the "vital few" by muting bars beyond the threshold crossing point
+8. Optionally displays value labels (count, percentage, or both) above each bar
 
 ## Anatomy of the Panel
 

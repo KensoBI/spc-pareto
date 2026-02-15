@@ -59,10 +59,74 @@ export function transformToParetoData(series: DataFrame[]): ParetoData | null {
 }
 
 /**
+ * Groups categories beyond topN into an "Other" bucket.
+ * Recalculates cumulative percentages while preserving the original total.
+ */
+export function applyTopNGrouping(data: ParetoData, topN: number): ParetoData {
+  if (data.categories.length <= topN) {
+    return data;
+  }
+
+  const categories = data.categories.slice(0, topN);
+  const values = data.values.slice(0, topN);
+  const otherSum = data.values.slice(topN).reduce((s, v) => s + v, 0);
+
+  categories.push('Other');
+  values.push(otherSum);
+
+  const cumulativePercent: number[] = [];
+  let runningSum = 0;
+  for (const v of values) {
+    runningSum += v;
+    cumulativePercent.push(data.total > 0 ? (runningSum / data.total) * 100 : 0);
+  }
+
+  return {
+    categories,
+    values,
+    cumulativePercent,
+    total: data.total,
+  };
+}
+
+export interface VitalSplit {
+  vitalValues: Array<number | null>;
+  trivialValues: Array<number | null>;
+}
+
+/**
+ * Splits bar values into vital and trivial series based on the threshold crossing point.
+ * Vital bars (at or before crossIdx) go in vitalValues, the rest in trivialValues.
+ */
+export function splitVitalTrivial(data: ParetoData, thresholdValue: number): VitalSplit {
+  const crossIdx = data.cumulativePercent.findIndex((v) => v >= thresholdValue);
+  const vitalValues: Array<number | null> = [];
+  const trivialValues: Array<number | null> = [];
+
+  for (let i = 0; i < data.values.length; i++) {
+    if (crossIdx >= 0 && i <= crossIdx) {
+      vitalValues.push(data.values[i]);
+      trivialValues.push(null);
+    } else {
+      vitalValues.push(null);
+      trivialValues.push(data.values[i]);
+    }
+  }
+
+  return { vitalValues, trivialValues };
+}
+
+/**
  * Converts ParetoData to uPlot's AlignedData format.
  * [xIndices[], barValues[], cumulativePercent[]]
+ *
+ * When vitalSplit is provided, produces 4 series instead:
+ * [xIndices[], vitalBarValues[], trivialBarValues[], cumulativePercent[]]
  */
-export function toAlignedData(data: ParetoData): AlignedData {
+export function toAlignedData(data: ParetoData, vitalSplit?: VitalSplit): AlignedData {
   const xIndices = data.categories.map((_, i) => i);
+  if (vitalSplit) {
+    return [xIndices, vitalSplit.vitalValues as number[], vitalSplit.trivialValues as number[], data.cumulativePercent];
+  }
   return [xIndices, data.values, data.cumulativePercent];
 }

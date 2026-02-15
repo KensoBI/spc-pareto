@@ -27,6 +27,27 @@ export const plugin = new PanelPlugin<Options>(ParetoPanel)
         category: ['Threshold'],
         showIf: (opts) => opts.showThresholdLine,
       })
+      .addBooleanSwitch({
+        path: 'enableVitalHighlight',
+        name: 'Highlight vital few',
+        description: 'Visually distinguish vital few bars from trivial many',
+        defaultValue: defaultOptions.enableVitalHighlight,
+        category: ['Threshold'],
+        showIf: (opts) => opts.showThresholdLine,
+      })
+      .addSliderInput({
+        path: 'trivialBarOpacity',
+        name: 'Trivial bar opacity',
+        description: 'Opacity for bars beyond the threshold crossing point',
+        defaultValue: defaultOptions.trivialBarOpacity,
+        settings: {
+          min: 10,
+          max: 100,
+          step: 5,
+        },
+        category: ['Threshold'],
+        showIf: (opts) => opts.showThresholdLine && opts.enableVitalHighlight,
+      })
       .addColorPicker({
         path: 'cumulativeLineColor',
         name: 'Line color',
@@ -63,6 +84,25 @@ export const plugin = new PanelPlugin<Options>(ParetoPanel)
         },
         category: ['Cumulative line'],
         showIf: (opts) => opts.showCumulativePoints,
+      })
+      .addBooleanSwitch({
+        path: 'enableTopN',
+        name: 'Limit categories',
+        description: 'Group low-frequency categories into an "Other" bucket',
+        defaultValue: defaultOptions.enableTopN,
+        category: ['Top N / Other'],
+      })
+      .addSliderInput({
+        path: 'topNCount',
+        name: 'Show top N categories',
+        defaultValue: defaultOptions.topNCount,
+        settings: {
+          min: 2,
+          max: 50,
+          step: 1,
+        },
+        category: ['Top N / Other'],
+        showIf: (opts) => opts.enableTopN,
       })
       .addColorPicker({
         path: 'barColor',
@@ -112,8 +152,28 @@ export const plugin = new PanelPlugin<Options>(ParetoPanel)
           ],
         },
         category: ['Bar'],
+      })
+      .addBooleanSwitch({
+        path: 'showBarLabels',
+        name: 'Show value labels',
+        description: 'Display value labels above each bar',
+        defaultValue: defaultOptions.showBarLabels,
+        category: ['Bar'],
+      })
+      .addRadio({
+        path: 'barLabelContent',
+        name: 'Label content',
+        defaultValue: defaultOptions.barLabelContent,
+        settings: {
+          options: [
+            { value: 'value', label: 'Count' },
+            { value: 'percent', label: '% of Total' },
+            { value: 'both', label: 'Both' },
+          ],
+        },
+        category: ['Bar'],
+        showIf: (opts) => opts.showBarLabels,
       });
 
     commonOptionsBuilder.addLegendOptions(builder);
-    commonOptionsBuilder.addTooltipOptions(builder);
   });
