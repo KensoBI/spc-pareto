@@ -35,6 +35,7 @@ SPC Pareto is built using Grafana's native visualization components. This means 
 
 | Feature | Description |
 |---------|-------------|
+| Raw data support | Accepts ungrouped observations and counts occurrences automatically |
 | Automatic sorting | Categories are ranked by frequency — no manual ordering needed |
 | Dual y-axes | Left axis shows frequency counts, right axis shows cumulative percentage (0–100%) |
 | Threshold line | Configurable threshold (default 80%) with horizontal and vertical reference lines |
@@ -65,16 +66,16 @@ SPC Pareto is built using Grafana's native visualization components. This means 
 
 1. Install the plugin from the [Grafana Plugin Catalog](https://grafana.com/grafana/plugins/kensobi-spcpareto-panel/)
 2. Add a new panel and select **SPC Pareto** as the visualization
-3. Configure a query that returns two fields:
-   - A **string field** for category names (e.g., defect type, error code)
-   - A **number field** for the count or frequency of each category
+3. Configure a query that returns either:
+   - A **string field** + a **number field** (pre-aggregated categories and counts), or
+   - A **string field** only (raw observations — the plugin counts occurrences automatically)
 4. The chart automatically sorts, calculates cumulative percentages, and renders the Pareto view
 
 <!-- TODO: Replace with actual screenshot URL after publishing -->
 <!-- ![Panel configuration](https://raw.githubusercontent.com/kensobi/spc-pareto/main/src/img/screenshot-config.png) -->
 <!-- SCREENSHOT: Grafana panel editor showing a query returning category+count data with the SPC Pareto visualization selected -->
 
-### Example Query (SQL)
+### Example Query (SQL — pre-aggregated)
 
 ```sql
 SELECT defect_type AS category, COUNT(*) AS count
@@ -82,6 +83,16 @@ FROM inspections
 WHERE $__timeFilter(inspection_time)
 GROUP BY defect_type
 ```
+
+### Example Query (SQL — raw observations)
+
+```sql
+SELECT defect_type
+FROM inspections
+WHERE $__timeFilter(inspection_time)
+```
+
+The plugin counts occurrences of each unique `defect_type` value automatically.
 
 ### Example Query (TestData)
 

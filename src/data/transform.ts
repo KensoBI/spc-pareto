@@ -13,33 +13,48 @@ export interface ParetoData {
  * sorts by value descending, and computes cumulative percentages.
  */
 export function transformToParetoData(series: DataFrame[]): ParetoData | null {
-  let categories: string[] = [];
-  let values: number[] = [];
+  const counts = new Map<string, number>();
+  let hasAggregated = false;
 
+  // First pass: look for pre-aggregated data (string + number fields)
   for (const frame of series) {
-    let categoryField = frame.fields.find((f) => f.type === FieldType.string);
-    let valueField = frame.fields.find((f) => f.type === FieldType.number);
+    const categoryField = frame.fields.find((f) => f.type === FieldType.string);
+    const valueField = frame.fields.find((f) => f.type === FieldType.number);
 
     if (!categoryField || !valueField) {
       continue;
     }
 
+    hasAggregated = true;
     for (let i = 0; i < frame.length; i++) {
-      categories.push(categoryField.values[i]);
-      values.push(valueField.values[i]);
+      const cat = categoryField.values[i];
+      counts.set(cat, (counts.get(cat) ?? 0) + valueField.values[i]);
     }
   }
 
-  if (categories.length === 0) {
+  // Fallback: raw observations — count occurrences of each string value
+  if (!hasAggregated) {
+    for (const frame of series) {
+      const stringField = frame.fields.find((f) => f.type === FieldType.string);
+      if (!stringField) {
+        continue;
+      }
+
+      for (let i = 0; i < frame.length; i++) {
+        const val = stringField.values[i];
+        counts.set(val, (counts.get(val) ?? 0) + 1);
+      }
+    }
+  }
+
+  if (counts.size === 0) {
     return null;
   }
 
-  // Build paired array and sort descending by value
-  const paired = categories.map((cat, i) => ({ category: cat, value: values[i] }));
-  paired.sort((a, b) => b.value - a.value);
-
-  const sortedCategories = paired.map((p) => p.category);
-  const sortedValues = paired.map((p) => p.value);
+  // Sort descending by value
+  const sorted = [...counts.entries()].sort((a, b) => b[1] - a[1]);
+  const sortedCategories = sorted.map(([cat]) => cat);
+  const sortedValues = sorted.map(([, val]) => val);
   const total = sortedValues.reduce((sum, v) => sum + v, 0);
 
   // Calculate cumulative percentages

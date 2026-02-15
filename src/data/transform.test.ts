@@ -30,6 +30,34 @@ describe('transformToParetoData', () => {
     expect(result!.total).toBe(100);
     expect(result!.cumulativePercent).toEqual([50, 90, 100]);
   });
+
+  it('should count occurrences from raw string-only observations', () => {
+    const frame: DataFrame = {
+      fields: [
+        { name: 'defect', type: FieldType.string, values: ['A', 'B', 'A', 'C', 'A', 'B'], config: {} },
+      ],
+      length: 6,
+    };
+    const result = transformToParetoData([frame]);
+
+    expect(result).not.toBeNull();
+    expect(result!.categories).toEqual(['A', 'B', 'C']);
+    expect(result!.values).toEqual([3, 2, 1]);
+    expect(result!.total).toBe(6);
+    expect(result!.cumulativePercent[0]).toBeCloseTo(50);
+    expect(result!.cumulativePercent[1]).toBeCloseTo(83.33, 1);
+    expect(result!.cumulativePercent[2]).toBeCloseTo(100);
+  });
+
+  it('should merge duplicate categories in aggregated data', () => {
+    const frame = makeFrame(['A', 'B', 'A'], [10, 30, 20]);
+    const result = transformToParetoData([frame]);
+
+    expect(result).not.toBeNull();
+    expect(result!.categories).toEqual(['A', 'B']);
+    expect(result!.values).toEqual([30, 30]);
+    expect(result!.total).toBe(60);
+  });
 });
 
 describe('toAlignedData', () => {
