@@ -19,17 +19,19 @@ interface TableRow {
 export const StatisticsTable: React.FC<StatisticsTableProps> = ({ data }) => {
   const tableData: TableRow[] = useMemo(() => {
     let runningCount = 0;
-    return data.categories.map((cat, i) => {
+    const rows: TableRow[] = [];
+    for (let i = 0; i < data.categories.length; i++) {
       runningCount += data.values[i];
-      return {
+      rows.push({
         id: String(i),
-        category: cat,
+        category: data.categories[i],
         frequency: data.values[i],
         pctOfTotal: data.total > 0 ? (data.values[i] / data.total) * 100 : 0,
         cumulativePct: data.cumulativePercent[i],
         cumulativeCount: runningCount,
-      };
-    });
+      });
+    }
+    return rows;
   }, [data]);
 
   const columns = useMemo(

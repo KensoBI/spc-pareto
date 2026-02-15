@@ -1,7 +1,6 @@
 import React, { useRef, useEffect, useLayoutEffect } from 'react';
 import uPlot from 'uplot';
-import { useTheme2 } from '@grafana/ui';
-import { UPlotConfigBuilder } from '@grafana/ui';
+import { UPlotConfigBuilder, useTheme2 } from '@grafana/ui';
 import { ParetoData } from '../../data/transform';
 
 export interface ThresholdLineProps {

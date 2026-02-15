@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useSplitter, useTheme2 } from '@grafana/ui';
+import { UPlotConfigBuilder, useSplitter, useTheme2 } from '@grafana/ui';
 import { PanelDataErrorView } from '@grafana/runtime';
 import { ParetoChart } from './ParetoChart/ParetoChart';
 import { ThresholdLine } from './ThresholdLine/ThresholdLine';
@@ -7,7 +7,6 @@ import { ParetoTooltip } from './ParetoChart/ParetoTooltip';
 import { StatisticsTable } from './StatisticsTable/StatisticsTable';
 import { transformToParetoData, ParetoData } from '../data/transform';
 import { PanelPropsDef } from '../types';
-import { UPlotConfigBuilder } from '@grafana/ui';
 
 export const ParetoPanel: React.FC<PanelPropsDef> = ({ data, options, width, height, fieldConfig, id }) => {
   const theme = useTheme2();
