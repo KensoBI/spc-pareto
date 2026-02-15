@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:grafana.com)",
+      "WebFetch(domain:developers.grafana.com)",
+      "WebFetch(domain:community.grafana.com)",
+      "WebFetch(domain:github.com)",
+      "Bash(npm install:*)",
+      "Bash(npm run dev:*)"
+    ]
+  }
+}
