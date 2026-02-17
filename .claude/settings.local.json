@@ -8,7 +8,16 @@
       "Bash(npm install:*)",
       "Bash(npm run dev:*)",
       "Bash(npx webpack:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(curl:*)",
+      "Bash(for plugin in \"grafana-polystat-panel\" \"mtanda-histogram-panel\" \"btplc-status-dot-panel\" \"farski-blendstat-panel\" \"digiapulssi-breadcrumb-panel\")",
+      "Bash(do echo \"=== $plugin ===\")",
+      "Bash(done)",
+      "Bash(for plugin in \"yesoreyeram-boomtable-panel\" \"marcusolsson-gantt-panel\" \"volkovlabs-image-panel\" \"cloudspout-button-panel\" \"larona-epict-panel\" \"snuids-trafficlights-panel\" \"pierosavi-imageit-panel\" \"gapit-htmlgraphics-panel\")",
+      "Bash(for plugin in \"aidanmountford-html-panel\" \"dalvany-image-panel\" \"fifemon-graphql-datasource\" \"ae3e-plotly-panel\" \"speakyourcode-button-panel\" \"scadavis-synoptic-panel\" \"corpglory-progresslist-panel\")",
+      "Bash(for plugin in \"volkovlabs-form-panel\" \"volkovlabs-variable-panel\" \"marcusolsson-treemap-panel\" \"marcusolsson-calendar-panel\" \"blackmirror1-statusbygroup-panel\" \"goshposh-metaqueries-datasource\")",
+      "Bash(for plugin in \"kensobi-spcchart-panel\" \"kensobi-spchistogram-panel\" \"kensobi-spcpareto-panel\" \"kensobi-spccad-panel\")",
+      "Bash(python3:*)"
     ]
   }
 }

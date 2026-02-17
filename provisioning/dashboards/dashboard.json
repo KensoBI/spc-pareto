@@ -15,6 +15,7 @@
       }
     ]
   },
+  "description": "Showcases all available features of the SPC Pareto panel plugin",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
@@ -23,71 +24,583 @@
   "liveNow": false,
   "panels": [
     {
-      "datasource": {
-        "type": "grafana-testdata-datasource",
-        "uid": "trlxrdZVk"
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 0
-      },
-      "id": 1,
-      "options": {
-        "seriesCountSize": "sm",
-        "showSeriesCount": false,
-        "text": "Default value of text input option"
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "grafana-testdata-datasource",
-            "uid": "db84e60d-b92a-4089-82cb-34842fb1754b"
-          },
-          "refId": "A",
-          "scenarioId": "raw_frame",
-          "rawFrameContent": "[\n  {\n    \"columns\": [\n      {\n        \"text\": \"Time\",\n        \"type\": \"time\"\n      },\n      {\n        \"text\": \"Label\",\n        \"type\": \"string\"\n      },\n      {\n        \"text\": \"Value\",\n        \"type\": \"number\"\n      }\n    ],\n    \"rows\": [\n      [1609459200000, \"A\", 10],\n      [1609462800000, \"B\", 20],\n      [1609466400000, \"C\", 15],\n      [1609470000000, \"D\", 25],\n      [1609473600000, \"E\", 30]\n    ]\n  },\n{\n    \"columns\": [\n      {\n        \"text\": \"Time\",\n        \"type\": \"time\"\n      },\n      {\n        \"text\": \"Label\",\n        \"type\": \"string\"\n      },\n      {\n        \"text\": \"Value\",\n        \"type\": \"number\"\n      }\n    ],\n    \"rows\": [\n      [1609459200000, \"A\", 40],\n      [1609462800000, \"B\", 50],\n      [1609466400000, \"C\", 45],\n      [1609470000000, \"D\", 55],\n      [1609473600000, \"E\", 60]\n    ]\n  }\n]"
-        }
-      ],
-      "title": "Sample Panel Title",
-      "type": "kensosoftware-spcpareto-panel"
+      "type": "row",
+      "title": "Basic Usage",
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+      "id": 100,
+      "collapsed": false,
+      "panels": []
     },
     {
       "datasource": {
         "type": "grafana-testdata-datasource",
         "uid": "trlxrdZVk"
       },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 0
-      },
-      "id": 2,
+      "title": "Default Settings — Manufacturing Defects",
+      "description": "Basic Pareto chart with default settings. Shows bars sorted by frequency, cumulative percentage line, 80% threshold, and statistics table.",
+      "type": "kensobi-spcpareto-panel",
+      "id": 1,
+      "gridPos": { "h": 12, "w": 12, "x": 0, "y": 1 },
       "options": {
-        "seriesCountSize": "sm",
-        "showSeriesCount": false,
-        "text": "Default value of text input option"
+        "showThresholdLine": true,
+        "thresholdValue": 80,
+        "enableVitalHighlight": false,
+        "trivialBarOpacity": 40,
+        "cumulativeLineColor": "orange",
+        "cumulativeLineWidth": 2,
+        "showCumulativePoints": true,
+        "cumulativePointSize": 5,
+        "showStatisticsTable": true,
+        "enableTopN": false,
+        "topNCount": 10,
+        "barColor": "blue",
+        "barFillOpacity": 80,
+        "barLineWidth": 1,
+        "barGradientMode": "none",
+        "showBarLabels": false,
+        "barLabelContent": "value",
+        "legend": { "displayMode": "list", "placement": "bottom", "calcs": [] },
+        "tooltip": { "mode": "single" }
       },
       "targets": [
         {
-          "alias": "",
-          "datasource": {
-            "type": "grafana-testdata-datasource",
-            "uid": "db84e60d-b92a-4089-82cb-34842fb1754b"
-          },
+          "datasource": { "type": "grafana-testdata-datasource", "uid": "trlxrdZVk" },
           "refId": "A",
-          "scenarioId": "no_data_points"
+          "scenarioId": "csv_content",
+          "csvContent": "category,count\nSurface Scratch,87\nDimensional Error,63\nColor Mismatch,45\nWeld Defect,38\nMissing Component,27\nSeal Failure,19\nContamination,12\nLabel Error,8\nPackaging Damage,5\nOther,3"
         }
-      ],
-      "title": "Sample Panel Title",
-      "type": "kensosoftware-spcpareto-panel"
+      ]
+    },
+    {
+      "datasource": {
+        "type": "grafana-testdata-datasource",
+        "uid": "trlxrdZVk"
+      },
+      "title": "Vital Few Highlight — IT Incident Categories",
+      "description": "Highlights the 'vital few' categories that account for 80% of issues. Trivial bars are shown with reduced opacity (30%).",
+      "type": "kensobi-spcpareto-panel",
+      "id": 2,
+      "gridPos": { "h": 12, "w": 12, "x": 12, "y": 1 },
+      "options": {
+        "showThresholdLine": true,
+        "thresholdValue": 80,
+        "enableVitalHighlight": true,
+        "trivialBarOpacity": 30,
+        "cumulativeLineColor": "orange",
+        "cumulativeLineWidth": 2,
+        "showCumulativePoints": true,
+        "cumulativePointSize": 5,
+        "showStatisticsTable": true,
+        "enableTopN": false,
+        "topNCount": 10,
+        "barColor": "#5794F2",
+        "barFillOpacity": 85,
+        "barLineWidth": 1,
+        "barGradientMode": "none",
+        "showBarLabels": false,
+        "barLabelContent": "value",
+        "legend": { "displayMode": "list", "placement": "bottom", "calcs": [] },
+        "tooltip": { "mode": "single" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "grafana-testdata-datasource", "uid": "trlxrdZVk" },
+          "refId": "A",
+          "scenarioId": "csv_content",
+          "csvContent": "incident_type,occurrences\nNetwork Outage,142\nServer Crash,98\nDisk Full,76\nAuthentication Failure,54\nDNS Resolution,41\nSSL Certificate Expiry,29\nMemory Leak,22\nPort Conflict,15\nPermission Denied,11\nTimeout Error,8\nConfig Drift,5\nLog Rotation Failure,3"
+        }
+      ]
+    },
+    {
+      "type": "row",
+      "title": "Bar Styling & Labels",
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 13 },
+      "id": 101,
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "datasource": {
+        "type": "grafana-testdata-datasource",
+        "uid": "trlxrdZVk"
+      },
+      "title": "Gradient Mode: Opacity — Customer Complaints",
+      "description": "Bars use opacity gradient fill mode. Value labels show count above each bar.",
+      "type": "kensobi-spcpareto-panel",
+      "id": 3,
+      "gridPos": { "h": 12, "w": 8, "x": 0, "y": 14 },
+      "options": {
+        "showThresholdLine": true,
+        "thresholdValue": 80,
+        "enableVitalHighlight": false,
+        "trivialBarOpacity": 40,
+        "cumulativeLineColor": "#FF9830",
+        "cumulativeLineWidth": 2,
+        "showCumulativePoints": true,
+        "cumulativePointSize": 5,
+        "showStatisticsTable": true,
+        "enableTopN": false,
+        "topNCount": 10,
+        "barColor": "#73BF69",
+        "barFillOpacity": 90,
+        "barLineWidth": 1,
+        "barGradientMode": "opacity",
+        "showBarLabels": true,
+        "barLabelContent": "value",
+        "legend": { "displayMode": "list", "placement": "bottom", "calcs": [] },
+        "tooltip": { "mode": "single" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "grafana-testdata-datasource", "uid": "trlxrdZVk" },
+          "refId": "A",
+          "scenarioId": "csv_content",
+          "csvContent": "complaint,count\nLong Wait Time,156\nBilling Error,112\nProduct Quality,89\nShipping Delay,67\nRude Staff,43\nWrong Item,31\nRefund Issue,24\nWebsite Bug,18"
+        }
+      ]
+    },
+    {
+      "datasource": {
+        "type": "grafana-testdata-datasource",
+        "uid": "trlxrdZVk"
+      },
+      "title": "Gradient Mode: Hue — Software Bug Types",
+      "description": "Bars use hue gradient fill mode. Value labels show percentage of total.",
+      "type": "kensobi-spcpareto-panel",
+      "id": 4,
+      "gridPos": { "h": 12, "w": 8, "x": 8, "y": 14 },
+      "options": {
+        "showThresholdLine": true,
+        "thresholdValue": 80,
+        "enableVitalHighlight": false,
+        "trivialBarOpacity": 40,
+        "cumulativeLineColor": "#FF9830",
+        "cumulativeLineWidth": 2,
+        "showCumulativePoints": true,
+        "cumulativePointSize": 5,
+        "showStatisticsTable": true,
+        "enableTopN": false,
+        "topNCount": 10,
+        "barColor": "#B877D9",
+        "barFillOpacity": 85,
+        "barLineWidth": 1,
+        "barGradientMode": "hue",
+        "showBarLabels": true,
+        "barLabelContent": "percent",
+        "legend": { "displayMode": "list", "placement": "bottom", "calcs": [] },
+        "tooltip": { "mode": "single" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "grafana-testdata-datasource", "uid": "trlxrdZVk" },
+          "refId": "A",
+          "scenarioId": "csv_content",
+          "csvContent": "bug_type,count\nNull Reference,94\nOff-by-One,71\nRace Condition,53\nMemory Leak,42\nType Error,36\nStack Overflow,28\nDeadlock,19\nBuffer Overflow,12"
+        }
+      ]
+    },
+    {
+      "datasource": {
+        "type": "grafana-testdata-datasource",
+        "uid": "trlxrdZVk"
+      },
+      "title": "Labels: Count + Percent — Supply Chain Issues",
+      "description": "Bar labels display both the count and percentage of total. Vital few highlighting enabled with hue gradient.",
+      "type": "kensobi-spcpareto-panel",
+      "id": 5,
+      "gridPos": { "h": 12, "w": 8, "x": 16, "y": 14 },
+      "options": {
+        "showThresholdLine": true,
+        "thresholdValue": 80,
+        "enableVitalHighlight": true,
+        "trivialBarOpacity": 25,
+        "cumulativeLineColor": "#FF9830",
+        "cumulativeLineWidth": 2,
+        "showCumulativePoints": true,
+        "cumulativePointSize": 6,
+        "showStatisticsTable": true,
+        "enableTopN": false,
+        "topNCount": 10,
+        "barColor": "#F2495C",
+        "barFillOpacity": 80,
+        "barLineWidth": 2,
+        "barGradientMode": "none",
+        "showBarLabels": true,
+        "barLabelContent": "both",
+        "legend": { "displayMode": "list", "placement": "bottom", "calcs": [] },
+        "tooltip": { "mode": "single" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "grafana-testdata-datasource", "uid": "trlxrdZVk" },
+          "refId": "A",
+          "scenarioId": "csv_content",
+          "csvContent": "issue,count\nLate Delivery,134\nDamaged Goods,97\nWrong Quantity,68\nDocumentation Error,52\nQuality Rejection,39\nLabeling Issue,26\nTemperature Excursion,18\nCustoms Hold,11"
+        }
+      ]
+    },
+    {
+      "type": "row",
+      "title": "Data Handling & Top N",
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 26 },
+      "id": 102,
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "datasource": {
+        "type": "grafana-testdata-datasource",
+        "uid": "trlxrdZVk"
+      },
+      "title": "Top N Grouping (Top 5) — Healthcare Complaints",
+      "description": "Limits display to the top 5 categories and groups the rest into 'Other'. Useful when there are many small categories.",
+      "type": "kensobi-spcpareto-panel",
+      "id": 6,
+      "gridPos": { "h": 12, "w": 12, "x": 0, "y": 27 },
+      "options": {
+        "showThresholdLine": true,
+        "thresholdValue": 80,
+        "enableVitalHighlight": true,
+        "trivialBarOpacity": 35,
+        "cumulativeLineColor": "orange",
+        "cumulativeLineWidth": 2,
+        "showCumulativePoints": true,
+        "cumulativePointSize": 5,
+        "showStatisticsTable": true,
+        "enableTopN": true,
+        "topNCount": 5,
+        "barColor": "#8AB8FF",
+        "barFillOpacity": 80,
+        "barLineWidth": 1,
+        "barGradientMode": "none",
+        "showBarLabels": true,
+        "barLabelContent": "value",
+        "legend": { "displayMode": "list", "placement": "bottom", "calcs": [] },
+        "tooltip": { "mode": "single" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "grafana-testdata-datasource", "uid": "trlxrdZVk" },
+          "refId": "A",
+          "scenarioId": "csv_content",
+          "csvContent": "complaint_category,count\nWait Time,189\nStaff Attitude,134\nCleanliness,98\nParking,76\nFood Quality,63\nNoise Level,47\nBilling Confusion,38\nSignage,29\nTemperature,22\nPrivacy,17\nAccessibility,14\nWiFi,9\nVending Machines,5"
+        }
+      ]
+    },
+    {
+      "datasource": {
+        "type": "grafana-testdata-datasource",
+        "uid": "trlxrdZVk"
+      },
+      "title": "Raw Data (Auto-Count) — Observation Log",
+      "description": "Accepts raw ungrouped observations (string field only, no numeric field). The plugin automatically counts occurrences of each category.",
+      "type": "kensobi-spcpareto-panel",
+      "id": 7,
+      "gridPos": { "h": 12, "w": 12, "x": 12, "y": 27 },
+      "options": {
+        "showThresholdLine": true,
+        "thresholdValue": 80,
+        "enableVitalHighlight": false,
+        "trivialBarOpacity": 40,
+        "cumulativeLineColor": "#FADE2A",
+        "cumulativeLineWidth": 3,
+        "showCumulativePoints": true,
+        "cumulativePointSize": 6,
+        "showStatisticsTable": true,
+        "enableTopN": false,
+        "topNCount": 10,
+        "barColor": "#FF6D00",
+        "barFillOpacity": 75,
+        "barLineWidth": 1,
+        "barGradientMode": "opacity",
+        "showBarLabels": true,
+        "barLabelContent": "both",
+        "legend": { "displayMode": "list", "placement": "bottom", "calcs": [] },
+        "tooltip": { "mode": "single" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "grafana-testdata-datasource", "uid": "trlxrdZVk" },
+          "refId": "A",
+          "scenarioId": "csv_content",
+          "csvContent": "defect_observed\nSurface Scratch\nSurface Scratch\nSurface Scratch\nSurface Scratch\nSurface Scratch\nSurface Scratch\nSurface Scratch\nSurface Scratch\nDimensional Error\nDimensional Error\nDimensional Error\nDimensional Error\nDimensional Error\nColor Mismatch\nColor Mismatch\nColor Mismatch\nColor Mismatch\nWeld Defect\nWeld Defect\nWeld Defect\nMissing Part\nMissing Part\nSeal Failure\nContamination"
+        }
+      ]
+    },
+    {
+      "type": "row",
+      "title": "Cumulative Line & Layout Options",
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 39 },
+      "id": 103,
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "datasource": {
+        "type": "grafana-testdata-datasource",
+        "uid": "trlxrdZVk"
+      },
+      "title": "Custom Cumulative Line — Thick Line, Large Points",
+      "description": "Cumulative line customized with increased width (4px), large points (8px), and a custom red color.",
+      "type": "kensobi-spcpareto-panel",
+      "id": 8,
+      "gridPos": { "h": 12, "w": 8, "x": 0, "y": 40 },
+      "options": {
+        "showThresholdLine": true,
+        "thresholdValue": 80,
+        "enableVitalHighlight": false,
+        "trivialBarOpacity": 40,
+        "cumulativeLineColor": "#F2495C",
+        "cumulativeLineWidth": 4,
+        "showCumulativePoints": true,
+        "cumulativePointSize": 8,
+        "showStatisticsTable": true,
+        "enableTopN": false,
+        "topNCount": 10,
+        "barColor": "#73BF69",
+        "barFillOpacity": 70,
+        "barLineWidth": 2,
+        "barGradientMode": "none",
+        "showBarLabels": false,
+        "barLabelContent": "value",
+        "legend": { "displayMode": "list", "placement": "bottom", "calcs": [] },
+        "tooltip": { "mode": "single" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "grafana-testdata-datasource", "uid": "trlxrdZVk" },
+          "refId": "A",
+          "scenarioId": "csv_content",
+          "csvContent": "cause,count\nOperator Error,78\nMachine Wear,62\nRaw Material,49\nCalibration Drift,37\nEnvironmental,28\nTooling Wear,21\nSetup Error,14"
+        }
+      ]
+    },
+    {
+      "datasource": {
+        "type": "grafana-testdata-datasource",
+        "uid": "trlxrdZVk"
+      },
+      "title": "No Points on Cumulative Line",
+      "description": "Cumulative line rendered without data point markers for a cleaner look.",
+      "type": "kensobi-spcpareto-panel",
+      "id": 9,
+      "gridPos": { "h": 12, "w": 8, "x": 8, "y": 40 },
+      "options": {
+        "showThresholdLine": true,
+        "thresholdValue": 80,
+        "enableVitalHighlight": false,
+        "trivialBarOpacity": 40,
+        "cumulativeLineColor": "#B877D9",
+        "cumulativeLineWidth": 3,
+        "showCumulativePoints": false,
+        "cumulativePointSize": 5,
+        "showStatisticsTable": true,
+        "enableTopN": false,
+        "topNCount": 10,
+        "barColor": "#5794F2",
+        "barFillOpacity": 80,
+        "barLineWidth": 1,
+        "barGradientMode": "none",
+        "showBarLabels": false,
+        "barLabelContent": "value",
+        "legend": { "displayMode": "list", "placement": "bottom", "calcs": [] },
+        "tooltip": { "mode": "single" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "grafana-testdata-datasource", "uid": "trlxrdZVk" },
+          "refId": "A",
+          "scenarioId": "csv_content",
+          "csvContent": "error_type,count\nTimeout,103\nConnection Refused,87\n404 Not Found,65\n500 Internal,48\n403 Forbidden,34\nRate Limited,22\nBad Gateway,16\nService Unavailable,11"
+        }
+      ]
+    },
+    {
+      "datasource": {
+        "type": "grafana-testdata-datasource",
+        "uid": "trlxrdZVk"
+      },
+      "title": "Chart Only — No Statistics Table",
+      "description": "Statistics table hidden to maximize chart area. No threshold line shown.",
+      "type": "kensobi-spcpareto-panel",
+      "id": 10,
+      "gridPos": { "h": 12, "w": 8, "x": 16, "y": 40 },
+      "options": {
+        "showThresholdLine": false,
+        "thresholdValue": 80,
+        "enableVitalHighlight": false,
+        "trivialBarOpacity": 40,
+        "cumulativeLineColor": "#FF9830",
+        "cumulativeLineWidth": 2,
+        "showCumulativePoints": true,
+        "cumulativePointSize": 5,
+        "showStatisticsTable": false,
+        "enableTopN": false,
+        "topNCount": 10,
+        "barColor": "#56A64B",
+        "barFillOpacity": 85,
+        "barLineWidth": 1,
+        "barGradientMode": "opacity",
+        "showBarLabels": true,
+        "barLabelContent": "percent",
+        "legend": { "displayMode": "list", "placement": "bottom", "calcs": [] },
+        "tooltip": { "mode": "single" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "grafana-testdata-datasource", "uid": "trlxrdZVk" },
+          "refId": "A",
+          "scenarioId": "csv_content",
+          "csvContent": "category,count\nDesign Flaw,92\nCode Bug,74\nMissing Test,58\nPerformance,43\nSecurity,31\nUsability,24"
+        }
+      ]
+    },
+    {
+      "type": "row",
+      "title": "Advanced: Custom Threshold & Multi-Query",
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 52 },
+      "id": 104,
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "datasource": {
+        "type": "grafana-testdata-datasource",
+        "uid": "trlxrdZVk"
+      },
+      "title": "Custom Threshold (90%) — Six Sigma Analysis",
+      "description": "Threshold set to 90% instead of the default 80%. Useful for stricter Pareto analysis where you want to capture more contributing factors.",
+      "type": "kensobi-spcpareto-panel",
+      "id": 11,
+      "gridPos": { "h": 12, "w": 12, "x": 0, "y": 53 },
+      "options": {
+        "showThresholdLine": true,
+        "thresholdValue": 90,
+        "enableVitalHighlight": true,
+        "trivialBarOpacity": 25,
+        "cumulativeLineColor": "orange",
+        "cumulativeLineWidth": 2,
+        "showCumulativePoints": true,
+        "cumulativePointSize": 5,
+        "showStatisticsTable": true,
+        "enableTopN": false,
+        "topNCount": 10,
+        "barColor": "#8AB8FF",
+        "barFillOpacity": 80,
+        "barLineWidth": 1,
+        "barGradientMode": "none",
+        "showBarLabels": true,
+        "barLabelContent": "value",
+        "legend": { "displayMode": "list", "placement": "bottom", "calcs": [] },
+        "tooltip": { "mode": "single" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "grafana-testdata-datasource", "uid": "trlxrdZVk" },
+          "refId": "A",
+          "scenarioId": "csv_content",
+          "csvContent": "defect_category,count\nSoldering Defect,220\nComponent Placement,185\nPCB Trace Issue,140\nConnector Fault,105\nESD Damage,78\nThermal Stress,52\nVibration Damage,35\nMoisture Ingress,22\nCorrosion,14\nFirmware Glitch,8"
+        }
+      ]
+    },
+    {
+      "datasource": {
+        "type": "grafana-testdata-datasource",
+        "uid": "trlxrdZVk"
+      },
+      "title": "Multiple Queries Combined — Merged Data Frames",
+      "description": "Two separate queries (Query A and Query B) with overlapping categories. The plugin automatically merges duplicate categories by summing their counts.",
+      "type": "kensobi-spcpareto-panel",
+      "id": 12,
+      "gridPos": { "h": 12, "w": 12, "x": 12, "y": 53 },
+      "options": {
+        "showThresholdLine": true,
+        "thresholdValue": 80,
+        "enableVitalHighlight": true,
+        "trivialBarOpacity": 35,
+        "cumulativeLineColor": "orange",
+        "cumulativeLineWidth": 2,
+        "showCumulativePoints": true,
+        "cumulativePointSize": 5,
+        "showStatisticsTable": true,
+        "enableTopN": false,
+        "topNCount": 10,
+        "barColor": "#5794F2",
+        "barFillOpacity": 80,
+        "barLineWidth": 1,
+        "barGradientMode": "none",
+        "showBarLabels": true,
+        "barLabelContent": "both",
+        "legend": { "displayMode": "list", "placement": "bottom", "calcs": [] },
+        "tooltip": { "mode": "single" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "grafana-testdata-datasource", "uid": "trlxrdZVk" },
+          "refId": "A",
+          "scenarioId": "csv_content",
+          "csvContent": "failure_mode,count\nBearing Wear,45\nSeal Leak,32\nShaft Misalignment,28\nVibration,21\nOverheating,15"
+        },
+        {
+          "datasource": { "type": "grafana-testdata-datasource", "uid": "trlxrdZVk" },
+          "refId": "B",
+          "scenarioId": "csv_content",
+          "csvContent": "failure_mode,count\nBearing Wear,38\nCorrosion,25\nSeal Leak,19\nFatigue Crack,16\nOverheating,12"
+        }
+      ]
+    },
+    {
+      "type": "row",
+      "title": "Full Featured & Legend Options",
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 65 },
+      "id": 105,
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "datasource": {
+        "type": "grafana-testdata-datasource",
+        "uid": "trlxrdZVk"
+      },
+      "title": "All Features Enabled — Production Line Analysis",
+      "description": "Every feature turned on: vital few highlight, Top N (7), bar labels (both), gradient (hue), custom cumulative line, right-side legend, and statistics table.",
+      "type": "kensobi-spcpareto-panel",
+      "id": 13,
+      "gridPos": { "h": 14, "w": 24, "x": 0, "y": 66 },
+      "options": {
+        "showThresholdLine": true,
+        "thresholdValue": 80,
+        "enableVitalHighlight": true,
+        "trivialBarOpacity": 25,
+        "cumulativeLineColor": "#FF9830",
+        "cumulativeLineWidth": 3,
+        "showCumulativePoints": true,
+        "cumulativePointSize": 7,
+        "showStatisticsTable": true,
+        "enableTopN": true,
+        "topNCount": 7,
+        "barColor": "#5794F2",
+        "barFillOpacity": 85,
+        "barLineWidth": 2,
+        "barGradientMode": "hue",
+        "showBarLabels": true,
+        "barLabelContent": "both",
+        "legend": { "displayMode": "list", "placement": "right", "calcs": [] },
+        "tooltip": { "mode": "single" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "grafana-testdata-datasource", "uid": "trlxrdZVk" },
+          "refId": "A",
+          "scenarioId": "csv_content",
+          "csvContent": "root_cause,count\nOperator Error,245\nMachine Malfunction,198\nRaw Material Defect,167\nProcess Variation,134\nTooling Wear,112\nEnvironmental Factor,89\nCalibration Drift,74\nSetup Mistake,58\nDesign Flaw,43\nMeasurement Error,31\nSupplier Issue,22\nTraining Gap,15\nSoftware Bug,9\nDocumentation Error,5"
+        }
+      ]
     }
   ],
   "refresh": "",
   "schemaVersion": 39,
-  "tags": [],
+  "tags": ["spc", "pareto", "showcase"],
   "templating": {
     "list": []
   },
@@ -97,7 +610,7 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "Provisioned SPC Pareto dashboard",
+  "title": "SPC Pareto — Feature Showcase",
   "uid": "a538aeff-5a8a-42a5-901c-938d896fdd6f",
   "version": 1,
   "weekStart": ""

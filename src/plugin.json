@@ -4,8 +4,8 @@
   "name": "SPC Pareto",
   "id": "kensobi-spcpareto-panel",
   "info": {
-    "keywords": ["panel"],
-    "description": "",
+    "keywords": ["panel", "pareto", "chart", "spc", "quality", "vital few", "80/20", "cumulative", "bar chart", "statistics"],
+    "description": "Pareto chart with cumulative percentage line, threshold highlighting, and statistics table.",
     "author": {
       "name": "Kenso software"
     },
@@ -13,13 +13,37 @@
       "small": "img/logo.svg",
       "large": "img/logo.svg"
     },
-    "links": [],
-    "screenshots": [],
+    "links": [
+      {
+        "name": "Project site",
+        "url": "https://kensobi.com"
+      },
+      {
+        "name": "Documentation",
+        "url": "https://docs.kensobi.com/panels/spc-pareto/"
+      },
+      {
+        "name": "License",
+        "url": "https://cdn.kensobi.com/assets/LICENSE"
+      },
+      {
+        "name": "Author's site",
+        "url": "https://kensobi.com"
+      }
+    ],
+    "screenshots": [
+      { "name": "Vital Few", "path": "img/vital-few.png" }, 
+      { "name": "Group", "path": "img/group-chart.png" },
+      { "name": "Editor", "path": "img/editor.png" },
+      { "name": "No Table", "path": "img/no-table.png" },
+      { "name": "All options enabled", "path": "img/all-enabled.png" },
+      { "name": "Labels and Percentages", "path": "img/labels-perc.png" }
+    ],
     "version": "%VERSION%",
     "updated": "%TODAY%"
   },
   "dependencies": {
-    "grafanaDependency": ">=12.3.0",
+    "grafanaDependency": ">=12.0.0",
     "plugins": []
   }
 }

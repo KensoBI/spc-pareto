@@ -1,117 +1,286 @@
-# Grafana panel plugin template
+# SPC Pareto
 
-This template is a starting point for building a panel plugin for Grafana.
+![Dynamic JSON Badge](https://img.shields.io/badge/dynamic/json?logo=grafana&query=$.version&url=https://grafana.com/api/plugins/kensobi-spcpareto-panel&label=Marketplace&prefix=v&color=F47A20)
+![Grafana](https://img.shields.io/badge/Grafana-12%2B-orange?logo=grafana)
 
-## What are Grafana panel plugins?
+Bring **Statistical Process Control** directly into your Grafana dashboards. The SPC Pareto panel helps you identify the most significant factors contributing to defects, downtime, or any categorical issue — so you can focus improvement efforts where they matter most.
 
-Panel plugins allow you to add new types of visualizations to your dashboard, such as maps, clocks, pie charts, lists, and more.
+![SPC Pareto panel overview](src/img/group-chart.png) 
 
-Use panel plugins when you want to do things like visualize data returned by data source queries, navigate between dashboards, or control external systems (such as smart home devices).
+## Why SPC Pareto?
 
-## Getting started
+The **Pareto principle** (80/20 rule) states that roughly 80% of effects come from 20% of causes. This plugin makes that insight instantly visible:
 
-### Frontend
+- **Bars sorted by impact** — categories are automatically ranked from highest to lowest frequency, making the biggest contributors immediately obvious
+- **Cumulative percentage line** — a running total overlay shows how quickly contributions accumulate toward 100%
+- **80/20 threshold line** — a configurable threshold line highlights where the "vital few" end and the "trivial many" begin
 
-1. Install dependencies
+![Statistics table](src/img/vital-few.png)
+
+## Built for Grafana
+
+SPC Pareto is built using Grafana's native visualization components. This means it inherits the look, feel, and behavior you already know:
+
+- **Native theming** — automatically adapts to light and dark mode
+- **Standard panel options** — legend placement, tooltip behavior, and field overrides work just like any other Grafana panel
+- **Resizable statistics table** — drag the splitter to balance chart and table space, just like Grafana's built-in panels
+- **Works with any data source** — use it with SQL databases, Prometheus, InfluxDB, CSV files, or any other Grafana data source
+
+## Features
+
+| Feature | Description |
+|---------|-------------|
+| Raw data support | Accepts ungrouped observations and counts occurrences automatically |
+| Automatic sorting | Categories are ranked by frequency — no manual ordering needed |
+| Dual y-axes | Left axis shows frequency counts, right axis shows cumulative percentage (0–100%) |
+| Threshold line | Configurable threshold (default 80%) with horizontal and vertical reference lines |
+| Vital few highlight | Bars beyond the threshold crossing point are visually muted, making the vital few stand out |
+| Cumulative line | Customizable color, width, and point markers |
+| Top N / Other grouping | Collapse low-frequency categories into an "Other" bucket to reduce noise |
+| Value labels | Optional count, percentage, or both displayed above each bar |
+| Statistics table | Interactive table with category, frequency, % of total, cumulative count, and cumulative % |
+| Resizable layout | Drag the splitter between chart and table to adjust the view |
+
+![Pareto chart with threshold](src/img/all-enabled.png)
+
+## Use Cases
+
+- **Manufacturing quality** — identify top defect types across production lines
+- **IT operations** — rank incident categories to prioritize root cause analysis
+- **Customer support** — surface the most common complaint categories
+- **Software development** — analyze bug categories, test failure reasons, or build errors
+- **Supply chain** — rank supplier issues or shipment delay causes
+
+## Requirements
+
+- Grafana **12** or later
+
+## Getting Started
+
+1. Install the plugin from the [Grafana Plugin Catalog](https://grafana.com/grafana/plugins/kensobi-spcpareto-panel/)
+2. Add a new panel and select **SPC Pareto** as the visualization
+3. Configure a query that returns either:
+   - A **string field** + a **number field** (pre-aggregated categories and counts), or
+   - A **string field** only (raw observations — the plugin counts occurrences automatically)
+4. The chart automatically sorts, calculates cumulative percentages, and renders the Pareto view
+
+![Panel configuration](src/img/editor.png)
+
+### Example Query (SQL — pre-aggregated)
+
+```sql
+SELECT defect_type AS category, COUNT(*) AS count
+FROM inspections
+WHERE $__timeFilter(inspection_time)
+GROUP BY defect_type
+```
+
+### Example Query (SQL — raw observations)
+
+```sql
+SELECT defect_type
+FROM inspections
+WHERE $__timeFilter(inspection_time)
+```
+
+The plugin counts occurrences of each unique `defect_type` value automatically.
+
+### Example Query (TestData)
+
+For a quick demo, use the **TestData** data source with the **CSV Content** scenario:
+
+```csv
+category,count
+Scratch,45
+Dent,38
+Contamination,29
+Misalignment,22
+Color Defect,15
+Crack,12
+Burr,8
+Warping,6
+Porosity,4
+```
+
+## Panel Options
+
+### Threshold
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| Show threshold line | Display the 80/20 reference lines | On |
+| Threshold value | Cumulative percentage threshold | 80% |
+| Highlight vital few | Visually mute bars beyond the threshold crossing point | Off |
+| Trivial bar opacity | Opacity for the muted "trivial many" bars (10–100%) | 40% |
+
+### Cumulative line
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| Line color | Color of the cumulative percentage line | Orange |
+| Line width | Stroke width of the cumulative line | 2 |
+| Show points | Show point markers on the cumulative line | On |
+| Point size | Size of point markers | 5 |
+
+### Top N / Other
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| Limit categories | Group low-frequency categories into an "Other" bucket | Off |
+| Show top N categories | Number of categories to show before grouping the rest | 10 |
+
+### Bar
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| Bar color | Color of the frequency bars | Blue |
+| Fill opacity | Bar fill opacity (0–100%) | 80% |
+| Line width | Bar border width | 1 |
+| Gradient mode | None, Opacity, or Hue | None |
+| Show value labels | Display labels above each bar | Off |
+| Label content | Count, % of Total, or Both | Count |
+
+### Statistics table
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| Show statistics table | Display the interactive statistics table | On |
+
+## Documentation
+
+For detailed documentation, configuration guides, and examples, see the [full documentation](https://docs.kensobi.com/panels/spc-pareto/).
+
+## Part of the KensoBI SPC Suite
+
+SPC Pareto is part of a growing family of **Statistical Process Control** plugins for Grafana by Kenso Software:
+
+**[SPC Chart Panel](https://github.com/KensoBI/spc-cad)** — Control charts for monitoring process stability over time. Supports Xbar-R, Xbar-S, and XmR charts with automatic calculation of control limits. If you're tracking whether a process is staying in control, this is your starting point.
+
+**[SPC Histogram Panel](https://github.com/KensoBI/spc-histogram)** — Distribution analysis with histograms, bell curves, and a built-in statistics table showing Cp, Cpk, Pp, and Ppk. Use it to understand process capability: is your process producing results within specification limits?
+
+**[SPC CAD Panel](https://github.com/KensoBI/spc-cad)** — Brings 3D geometry into the picture, letting you bind the data from control charts and histograms to physical features on your parts.
+
+
+## Development Setup
+
+### Prerequisites
+
+- Node.js (LTS version recommended)
+- npm or yarn
+- Docker (for local Grafana instance)
+
+### Installation
+
+1. Clone the repository
+
+   ```bash
+   git clone https://github.com/kensobi/spc-pareto.git
+   cd spc-pareto
+   ```
+
+2. Install dependencies
 
    ```bash
    npm install
    ```
 
-2. Build plugin in development mode and run in watch mode
+### Development Workflow
+
+1. **Build plugin in development mode with watch**
 
    ```bash
    npm run dev
    ```
 
-3. Build plugin in production mode
+2. **Run Grafana locally**
+
+   ```bash
+   npm run server
+   ```
+
+   Access Grafana at `http://localhost:3000` (default credentials: admin/admin)
+
+3. **Build plugin for production**
 
    ```bash
    npm run build
    ```
 
-4. Run the tests (using Jest)
+### Testing
 
-   ```bash
-   # Runs the tests and watches for changes, requires git init first
-   npm run test
+**Unit Tests (Jest)**
 
-   # Exits after running all the tests
-   npm run test:ci
-   ```
+```bash
+# Run tests in watch mode (requires git init first)
+npm run test
 
-5. Spin up a Grafana instance and run the plugin inside it (using Docker)
+# Run tests once (CI mode)
+npm run test:ci
+```
 
-   ```bash
-   npm run server
-   ```
+**E2E Tests (Playwright)**
 
-6. Run the E2E tests (using Playwright)
+```bash
+# Start Grafana instance first
+npm run server
 
-   ```bash
-   # Spins up a Grafana instance first that we tests against
-   npm run server
+# Or specify a Grafana version
+GRAFANA_VERSION=11.3.0 npm run server
 
-   # If you wish to start a certain Grafana version. If not specified will use latest by default
-   GRAFANA_VERSION=11.3.0 npm run server
+# Run E2E tests
+npm run e2e
+```
 
-   # Starts the tests
-   npm run e2e
-   ```
+**Linting**
 
-7. Run the linter
+```bash
+npm run lint
 
-   ```bash
-   npm run lint
+# Auto-fix issues
+npm run lint:fix
+```
 
-   # or
+## Building and Packaging
 
-   npm run lint:fix
-   ```
+### Development Build
 
-# Distributing your plugin
+```bash
+npm run dev
+```
 
-When distributing a Grafana plugin either within the community or privately the plugin must be signed so the Grafana application can verify its authenticity. This can be done with the `@grafana/sign-plugin` package.
+Builds the plugin with source maps and watches for changes.
 
-_Note: It's not necessary to sign a plugin during development. The docker development environment that is scaffolded with `@grafana/create-plugin` caters for running the plugin without a signature._
+### Production Build
 
-## Initial steps
+```bash
+npm run build
+```
 
-Before signing a plugin please read the Grafana [plugin publishing and signing criteria](https://grafana.com/legal/plugins/#plugin-publishing-and-signing-criteria) documentation carefully.
 
-`@grafana/create-plugin` has added the necessary commands and workflows to make signing and distributing a plugin via the grafana plugins catalog as straightforward as possible.
+## Contributing
 
-Before signing a plugin for the first time please consult the Grafana [plugin signature levels](https://grafana.com/legal/plugins/#what-are-the-different-classifications-of-plugins) documentation to understand the differences between the types of signature level.
+We welcome contributions, feedback, and feature requests!
 
-1. Create a [Grafana Cloud account](https://grafana.com/signup).
-2. Make sure that the first part of the plugin ID matches the slug of your Grafana Cloud account.
-   - _You can find the plugin ID in the `plugin.json` file inside your plugin directory. For example, if your account slug is `acmecorp`, you need to prefix the plugin ID with `acmecorp-`._
-3. Create a Grafana Cloud API key with the `PluginPublisher` role.
-4. Keep a record of this API key as it will be required for signing a plugin
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Make your changes
+4. Run tests (`npm run test:ci`)
+5. Run linter (`npm run lint:fix`)
+6. Commit your changes
+7. Push to your fork
+8. Open a Pull Request
 
-## Signing a plugin
+Please open an [issue](https://github.com/kensobi/spc-pareto/issues) to discuss major changes before submitting a PR.
 
-### Using Github actions release workflow
 
-If the plugin is using the github actions supplied with `@grafana/create-plugin` signing a plugin is included out of the box. The [release workflow](./.github/workflows/release.yml) can prepare everything to make submitting your plugin to Grafana as easy as possible. Before being able to sign the plugin however a secret needs adding to the Github repository.
+## License
 
-1. Please navigate to "settings > secrets > actions" within your repo to create secrets.
-2. Click "New repository secret"
-3. Name the secret "GRAFANA_API_KEY"
-4. Paste your Grafana Cloud API key in the Secret field
-5. Click "Add secret"
+This software is distributed under the AGPL-3.0-only license — see [LICENSE](LICENSE) for details.
 
-#### Push a version tag
+## Support
 
-To trigger the workflow we need to push a version tag to github. This can be achieved with the following steps:
+If you have any questions or feedback, you can:
 
-1. Run `npm version <major|minor|patch>`
-2. Run `git push origin main --follow-tags`
-
-## Learn more
-
-Below you can find source code for existing app plugins and other related documentation.
-
-- [Basic panel plugin example](https://github.com/grafana/grafana-plugin-examples/tree/master/examples/panel-basic#readme)
-- [`plugin.json` documentation](https://grafana.com/developers/plugin-tools/reference/plugin-json)
-- [How to sign a plugin?](https://grafana.com/developers/plugin-tools/publish-a-plugin/sign-a-plugin)
+- Ask a question on the [KensoBI Discord channel](https://discord.gg/bekfAuAjGm).
+- GitHub Issues: https://github.com/kensobi/spc-pareto/issues
+- Grafana Community: https://community.grafana.com/
