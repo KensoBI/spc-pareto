@@ -30,10 +30,10 @@ jobs:
         id: build
         run: npm run build
 
-      - name: Sign plugin
-        run: |
-          export GRAFANA_ACCESS_POLICY_TOKEN=${{ secrets.GRAFANA_POLICY_TOKEN }}
-          npx @grafana/sign-plugin@latest
+      # - name: Sign plugin
+      #   run: |
+      #     export GRAFANA_ACCESS_POLICY_TOKEN=${{ secrets.GRAFANA_POLICY_TOKEN }}
+      #     npx @grafana/sign-plugin@latest
 
       - name: Get plugin metadata
         id: metadata
