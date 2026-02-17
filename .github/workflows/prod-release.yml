@@ -75,15 +75,3 @@ jobs:
             ./${{ steps.metadata.outputs.archive-checksum }}
           body: |
             Release notes
-
-      - name: Set up S3cmd cli tool
-        uses: s3-actions/s3cmd@v1.2.0
-        with:
-          provider: digitalocean
-          access_key: ${{ secrets.SPACES_S3_ACCESS_KEY }}
-          secret_key: ${{ secrets.SPACES_S3_SECRET_KEY }}
-          region: nyc3
-
-      - name: Upload to Spaces
-        run: |
-          s3cmd put ${{ steps.metadata.outputs.archive }} --mime-type 'application/zip' --acl-public ${{ secrets.PLUGINS_PATH }}/prod/${{ steps.metadata.outputs.plugin-id }}.zip
