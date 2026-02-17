@@ -21,14 +21,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '24'
-          cache: 'yarn'
+          cache: 'npm'
 
       - name: Install dependencies
-        run: yarn install --immutable --prefer-offline
+        run: npm ci
 
       - name: Build and test frontend
         id: build
-        run: yarn build
+        run: npm run build
 
       - name: Sign plugin
         run: |
