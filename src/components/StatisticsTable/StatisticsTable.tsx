@@ -1,5 +1,7 @@
 import React, { useMemo } from 'react';
-import { InteractiveTable } from '@grafana/ui';
+import { GrafanaTheme2 } from '@grafana/data';
+import { InteractiveTable, useStyles2 } from '@grafana/ui';
+import { css } from '@emotion/css';
 import { CellProps } from 'react-table';
 import { ParetoData } from '../../data/transform';
 
@@ -16,7 +18,15 @@ interface TableRow {
   cumulativeCount: number;
 }
 
+const getStyles = (_theme: GrafanaTheme2) => ({
+  wrapper: css({
+    width: '100%',
+  }),
+});
+
 export const StatisticsTable: React.FC<StatisticsTableProps> = ({ data }) => {
+  const styles = useStyles2(getStyles);
+
   const tableData: TableRow[] = useMemo(() => {
     let runningCount = 0;
     const rows: TableRow[] = [];
@@ -74,7 +84,7 @@ export const StatisticsTable: React.FC<StatisticsTableProps> = ({ data }) => {
   }
 
   return (
-    <div style={{ width: '100%' }}>
+    <div className={styles.wrapper}>
       <InteractiveTable columns={columns} data={tableData} getRowId={(row: TableRow) => row.id} />
     </div>
   );

@@ -3,7 +3,7 @@
 ![Dynamic JSON Badge](https://img.shields.io/badge/dynamic/json?logo=grafana&query=$.version&url=https://grafana.com/api/plugins/kensobi-spcpareto-panel&label=Marketplace&prefix=v&color=F47A20)
 ![Grafana](https://img.shields.io/badge/Grafana-11%2B-orange?logo=grafana)
 
-Bring **Statistical Process Control** directly into your Grafana dashboards. The SPC Pareto panel helps you identify the most significant factors contributing to defects, downtime, or any categorical issue — so you can focus improvement efforts where they matter most.
+The SPC Pareto panel helps you identify the most significant factors contributing to defects, downtime, or any categorical issue — so you can focus improvement efforts where they matter most.
 
 ![SPC Pareto panel overview](https://raw.githubusercontent.com/kensobi/spc-pareto/main/src/img/group-chart.png) 
 

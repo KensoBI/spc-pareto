@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useLayoutEffect } from 'react';
 import uPlot from 'uplot';
-import { UPlotConfigBuilder, useTheme2 } from '@grafana/ui';
+import { GrafanaTheme2 } from '@grafana/data';
+import { UPlotConfigBuilder, useTheme2, UPLOT_AXIS_FONT_SIZE } from '@grafana/ui';
 import { ParetoData } from '../../data/transform';
 
 export interface ThresholdLineProps {
@@ -13,6 +14,7 @@ export const ThresholdLine: React.FC<ThresholdLineProps> = ({ config, data, thre
   const theme = useTheme2();
   const dataRef = useRef(data);
   const thresholdRef = useRef(thresholdValue);
+  const themeRef = useRef<GrafanaTheme2>(theme);
 
   useEffect(() => {
     dataRef.current = data;
@@ -21,6 +23,10 @@ export const ThresholdLine: React.FC<ThresholdLineProps> = ({ config, data, thre
   useEffect(() => {
     thresholdRef.current = thresholdValue;
   }, [thresholdValue]);
+
+  useEffect(() => {
+    themeRef.current = theme;
+  }, [theme]);
 
   useLayoutEffect(() => {
     config.addHook('draw', (u: uPlot) => {
@@ -31,13 +37,14 @@ export const ThresholdLine: React.FC<ThresholdLineProps> = ({ config, data, thre
 
       const threshold = thresholdRef.current;
       const paretoData = dataRef.current;
+      const t = themeRef.current;
 
       ctx.save();
       ctx.beginPath();
       ctx.rect(u.bbox.left, u.bbox.top, u.bbox.width, u.bbox.height);
       ctx.clip();
 
-      const lineColor = theme.colors.error.main;
+      const lineColor = t.colors.error.main;
 
       // Horizontal line at threshold % on y-pct scale
       const yPos = u.valToPos(threshold, 'y-pct', true);
@@ -52,7 +59,7 @@ export const ThresholdLine: React.FC<ThresholdLineProps> = ({ config, data, thre
 
       // Draw label
       ctx.setLineDash([]);
-      ctx.font = `10px ${theme.typography.fontFamily}`;
+      ctx.font = `${UPLOT_AXIS_FONT_SIZE}px ${t.typography.fontFamily}`;
       ctx.fillStyle = lineColor;
       ctx.textAlign = 'right';
       ctx.fillText(`${threshold}%`, u.bbox.left + u.bbox.width - 4, yPos - 4);
@@ -73,7 +80,7 @@ export const ThresholdLine: React.FC<ThresholdLineProps> = ({ config, data, thre
 
       ctx.restore();
     });
-  }, [config, theme]);
+  }, [config]);
 
   return null;
 };

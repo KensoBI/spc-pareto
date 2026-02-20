@@ -175,5 +175,5 @@ export const plugin = new PanelPlugin<Options>(ParetoPanel)
         showIf: (opts) => opts.showBarLabels,
       });
 
-    commonOptionsBuilder.addLegendOptions(builder);
+    commonOptionsBuilder.addLegendOptions(builder, false);
   });

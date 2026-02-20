@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useLayoutEffect } from 'react';
 import uPlot from 'uplot';
+import { GrafanaTheme2 } from '@grafana/data';
 import { UPlotConfigBuilder, useTheme2 } from '@grafana/ui';
 import { ParetoData } from '../../data/transform';
 
@@ -20,14 +21,14 @@ export const VitalHighlight: React.FC<VitalHighlightProps> = ({
   const dataRef = useRef(data);
   const thresholdRef = useRef(thresholdValue);
   const trivialOpacityRef = useRef(trivialBarOpacity);
+  const themeRef = useRef<GrafanaTheme2>(theme);
 
   useEffect(() => { dataRef.current = data; }, [data]);
   useEffect(() => { thresholdRef.current = thresholdValue; }, [thresholdValue]);
   useEffect(() => { trivialOpacityRef.current = trivialBarOpacity; }, [trivialBarOpacity]);
+  useEffect(() => { themeRef.current = theme; }, [theme]);
 
   useLayoutEffect(() => {
-    const bgColor = theme.colors.background.primary;
-
     config.addHook('draw', (u: uPlot) => {
       const ctx = u.ctx;
       if (!ctx) {
@@ -37,6 +38,7 @@ export const VitalHighlight: React.FC<VitalHighlightProps> = ({
       const paretoData = dataRef.current;
       const threshold = thresholdRef.current;
       const trivialAlpha = trivialOpacityRef.current / 100;
+      const bgColor = themeRef.current.colors.background.primary;
 
       const crossIdx = paretoData.cumulativePercent.findIndex((v) => v >= threshold);
       if (crossIdx < 0 || crossIdx >= paretoData.values.length - 1) {
@@ -72,7 +74,7 @@ export const VitalHighlight: React.FC<VitalHighlightProps> = ({
 
       ctx.restore();
     });
-  }, [config, theme]);
+  }, [config]);
 
   return null;
 };
