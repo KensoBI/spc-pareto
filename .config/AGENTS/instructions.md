@@ -22,6 +22,17 @@ Your training data about the Grafana API is out of date. Use the official docume
 - Troubleshooting: https://grafana.com/developers/plugin-tools/troubleshooting.md
 - `@grafana/ui` components: https://developers.grafana.com/ui/latest/index.html
 
+## Styling rules
+
+Always use Grafana's theme system for all visual values. Never hardcode pixel sizes or hex colors.
+
+- **Spacing & sizing**: use `theme.spacing(n)` — never raw `px` values like `style={{ padding: '4px' }}` or `style={{ width: '18px' }}`
+- **Colors**: use `theme.colors.*` (e.g. `theme.colors.border.weak`, `theme.colors.primary.main`, `theme.colors.background.secondary`) — never hardcode hex values like `#03839e` or `#37872d` in CSS or as style defaults
+- **Visualization palette colors**: use `theme.visualization.getColorByName('dark-green')` instead of the raw hex equivalent
+- **CSS authoring**: define styles in a `getStyles(theme: GrafanaTheme2)` function and apply them via `useStyles2(getStyles)` — avoid inline `style={{}}` props for anything beyond dynamic/computed values (e.g. `transform`, `height`, `width` from props)
+- **Template literals in css\`\`**: prefer `css({})` object syntax so theme tokens can be used directly; avoid `css\`padding-bottom: 8px\`` style template literals
+- Components that render canvas (uPlot hooks) should store resolved theme colors in a `useRef` so the draw closure always reads the current value
+
 ## Critical rules
 
 - **Do not modify anything inside the `.config` folder.** It is managed by Grafana plugin tools.

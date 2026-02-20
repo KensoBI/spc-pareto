@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useLayoutEffect } from 'react';
 import uPlot from 'uplot';
-import { UPlotConfigBuilder, useTheme2 } from '@grafana/ui';
+import { GrafanaTheme2 } from '@grafana/data';
+import { UPlotConfigBuilder, useTheme2, UPLOT_AXIS_FONT_SIZE } from '@grafana/ui';
 import { ParetoData } from '../../data/transform';
 
 export interface BarLabelsProps {
@@ -13,6 +14,7 @@ export const BarLabels: React.FC<BarLabelsProps> = ({ config, data, labelContent
   const theme = useTheme2();
   const dataRef = useRef(data);
   const labelContentRef = useRef(labelContent);
+  const themeRef = useRef<GrafanaTheme2>(theme);
 
   useEffect(() => {
     dataRef.current = data;
@@ -21,6 +23,10 @@ export const BarLabels: React.FC<BarLabelsProps> = ({ config, data, labelContent
   useEffect(() => {
     labelContentRef.current = labelContent;
   }, [labelContent]);
+
+  useEffect(() => {
+    themeRef.current = theme;
+  }, [theme]);
 
   useLayoutEffect(() => {
     config.addHook('draw', (u: uPlot) => {
@@ -31,10 +37,11 @@ export const BarLabels: React.FC<BarLabelsProps> = ({ config, data, labelContent
 
       const paretoData = dataRef.current;
       const content = labelContentRef.current;
+      const t = themeRef.current;
 
       ctx.save();
-      ctx.font = `11px ${theme.typography.fontFamily}`;
-      ctx.fillStyle = theme.colors.text.primary;
+      ctx.font = `${UPLOT_AXIS_FONT_SIZE}px ${t.typography.fontFamily}`;
+      ctx.fillStyle = t.colors.text.primary;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'bottom';
 
@@ -60,7 +67,7 @@ export const BarLabels: React.FC<BarLabelsProps> = ({ config, data, labelContent
 
       ctx.restore();
     });
-  }, [config, theme]);
+  }, [config]);
 
   return null;
 };
