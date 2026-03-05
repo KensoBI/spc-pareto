@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.2
+
+### Changed
+
+- Updated to Grafana 12.4.0
+- Security improvements - updated dependencies to address known vulnerabilities
+
 ## 1.0.1
 
 ### Changed
